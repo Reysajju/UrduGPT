@@ -1,7 +1,7 @@
 import { Handler } from '@netlify/functions';
 import fetch from 'node-fetch';
 
-const API_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generateText';
+const API_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 const handler: Handler = async (event) => {
   // Only allow POST requests.
@@ -13,10 +13,14 @@ const handler: Handler = async (event) => {
   }
 
   try {
+    // Log the raw event for debugging.
+    console.log('Event body:', event.body);
+    
     // Parse the incoming request body.
     const { query } = JSON.parse(event.body || '{}');
 
     if (!query) {
+      console.error('Query is missing in the request body');
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Query is required' }),
@@ -26,6 +30,7 @@ const handler: Handler = async (event) => {
     // Get the Google API key from environment variables.
     const googleApiKey = process.env.GOOGLE_API_KEY;
     if (!googleApiKey) {
+      console.error('GOOGLE_API_KEY is missing from environment variables');
       return {
         statusCode: 500,
         body: JSON.stringify({ error: 'Google API key is not configured' }),
@@ -53,6 +58,8 @@ Please respond with Urdu poetry that addresses this query while following the ab
       maxOutputTokens: 512,
     };
 
+    console.log('Sending payload to Google API:', payload);
+
     // Make the POST request to Google's API.
     const response = await fetch(`${API_ENDPOINT}?key=${googleApiKey}`, {
       method: 'POST',
@@ -64,10 +71,13 @@ Please respond with Urdu poetry that addresses this query while following the ab
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error(`Google API returned status ${response.status}: ${errorText}`);
       throw new Error(`Google API Error: ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('Google API response data:', data);
+
     const output = data.candidates?.[0]?.output || '';
 
     return {
