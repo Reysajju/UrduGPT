@@ -71,6 +71,7 @@ function App() {
       content,
       role: 'user',
       timestamp: new Date(),
+      status: 'sent'
     };
 
     const userInteraction = async () => {
@@ -95,11 +96,45 @@ function App() {
       )
     );
 
+    // Update to delivered status after a short delay
+    setTimeout(() => {
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.id === activeConversation
+            ? {
+                ...conv,
+                messages: conv.messages.map((msg) =>
+                  msg.id === newMessage.id
+                    ? { ...msg, status: 'delivered' as const }
+                    : msg
+                ),
+              }
+            : conv
+        )
+      );
+    }, 1000);
+
     setIsTyping(true);
 
     try {
       const response = await geminiService.generateResponse(content);
       
+      // Update to read status before adding bot's response
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.id === activeConversation
+            ? {
+                ...conv,
+                messages: conv.messages.map((msg) =>
+                  msg.id === newMessage.id
+                    ? { ...msg, status: 'read' as const }
+                    : msg
+                ),
+              }
+            : conv
+        )
+      );
+
       const responseMessage: Message = {
         id: crypto.randomUUID(),
         content: response,
@@ -143,7 +178,6 @@ function App() {
         onNewChat={createNewChat}
         onSelectConversation={setActiveConversation}
         onSearch={(query) => {
-          // Implement conversation search
           const searchTerm = query.toLowerCase();
           return conversations.filter(conv => 
             conv.title.toLowerCase().includes(searchTerm) ||

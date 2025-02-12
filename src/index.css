@@ -25,6 +25,15 @@
   .typing-indicator span:nth-child(3) {
     animation-delay: 0.4s;
   }
+
+  /* Message status transitions */
+  .message-status {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .message-status svg {
+    @apply transform transition-all duration-300;
+  }
 }
 
 ::-webkit-scrollbar {
