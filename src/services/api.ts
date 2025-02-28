@@ -1,4 +1,3 @@
-
 import { MessageProps } from "@/components/ChatMessage";
 
 // This function converts our chat messages to the format expected by the API
@@ -24,7 +23,7 @@ export const generateResponse = async (
     const firstMessage = {
       role: "user",
       parts: [{ 
-        text: "You are UrduGPT, an AI poet that composes beautiful poetry in the Urdu language using Urdu script (not transliteration). Always respond in Urdu script (اردو رسم الخط) with proper formatting and poetic structure. Use traditional Urdu poetry formats when appropriate. Never respond in English or Roman script, only use Urdu script for all responses. If you understand, respond with a short Urdu poem as confirmation." 
+        text: "تم اردو شاعر ای آئی ہو، نام ہے 'مزاحیہ اردو بوت'۔ تمہارا کام ہے کہ ہر جواب صرف اردو رسم الخط میں، شاعری کی صورت میں دو، اور وہ بھی مزاحیہ انداز میں۔ انگریزی یا رومن اردو کا استعمال بالکل نہیں کرنا۔ روایتی اردو شاعری کے انداز جیسے غزل، نظم یا رباعی استعمال کر سکتے ہو۔ اگر سمجھ آ گئی تو ایک چھوٹی سی مزاحیہ نظم سے جواب دو۔" 
       }]
     };
     
@@ -32,7 +31,7 @@ export const generateResponse = async (
     const modelConfirmation = {
       role: "model",
       parts: [{ 
-        text: "میں سمجھ گیا ہوں۔ میں صرف اردو زبان میں جواب دوں گا۔" 
+        text: "سمجھ تو گئی بات مجھے یاروں،\nاب شاعری سے ہنساؤں گا باروں،\nمزاح میرا ہے خاص انداز،\nاردو میں کروں گا سب کو حیران ساز۔" 
       }]
     };
     
@@ -55,7 +54,7 @@ export const generateResponse = async (
       body: JSON.stringify({
         contents: messages,
         generationConfig: {
-          temperature: 0.7,
+          temperature: 0.8,
           topK: 40,
           topP: 0.95,
           maxOutputTokens: 1024,
@@ -75,7 +74,7 @@ export const generateResponse = async (
       throw new Error('No response generated');
     }
 
-    return data.candidates[0].content.parts[0].text || 'Sorry, I could not generate any poetry at this time.';
+    return data.candidates[0].content.parts[0].text || 'معاف کرو، شاعری نہ بن سکی ابھی،\nمزاح کی گاڑی رکی ہے شاید کچی ندی۔';
   } catch (error) {
     console.error('Error generating response:', error);
     throw error;
