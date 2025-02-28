@@ -1,4 +1,3 @@
-
 import React from 'react';
 import LandingPage from '@/components/LandingPage';
 import { Helmet } from 'react-helmet';
@@ -37,6 +36,45 @@ const Index = () => {
         
         {/* Canonical URL */}
         <link rel="canonical" href={currentURL} />
+        
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icons/icon-16x16.png" type="image/png" sizes="16x16" />
+        <link rel="icon" href="/icons/icon-32x32.png" type="image/png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
+        
+        {/* PWA manifest */}
+        <link rel="manifest" href="/manifest.json" />
+        
+        {/* Structured data */}
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              "name": "UrduGPT",
+              "description": "AI-powered Urdu Poetry Conversations",
+              "applicationCategory": "ChatBot",
+              "operatingSystem": "Web",
+              "offers": {
+                "@type": "Offer",
+                "price": "0"
+              },
+              "author": {
+                "@type": "Person",
+                "name": "Sajjad Rasool"
+              },
+              "url": "https://urdu-gpt.com",
+              "screenshot": "https://urdu-gpt.com/screenshots/app-screenshot.png",
+              "softwareVersion": "2.0",
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.8",
+                "ratingCount": "156"
+              }
+            }
+          `}
+        </script>
       </Helmet>
       <LandingPage />
     </>

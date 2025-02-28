@@ -1,129 +1,175 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import VideoBackground from './VideoBackground';
-import Logo from './Logo';
-import Chat from './Chat';
-import FirstVisitAlert from './FirstVisitAlert';
+import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, MessageSquare, ExternalLink } from 'lucide-react';
+import { ArrowRight, MessageSquare, Moon, Sun } from 'lucide-react';
+import VideoBackground from '@/components/VideoBackground';
+import Logo from '@/components/Logo';
+import FirstVisitAlert from '@/components/FirstVisitAlert';
+import Chat from '@/components/Chat';
 
 const LandingPage = () => {
-  const [showChat, setShowChat] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [lowPowerMode, setLowPowerMode] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
 
-  const scrollToChat = () => {
-    setShowChat(true);
-    setTimeout(() => {
-      document.getElementById('chat-section')?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+  // Check system preferences for dark mode and battery status
+  useEffect(() => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedMode = localStorage.getItem('urduGptDarkMode');
+    
+    if (savedMode !== null) {
+      setDarkMode(JSON.parse(savedMode));
+    } else {
+      setDarkMode(prefersDark);
+    }
+    
+    // Check if battery API is available
+    if ('getBattery' in navigator) {
+      // @ts-ignore - getBattery is not in the TypeScript navigator type
+      navigator.getBattery().then((battery) => {
+        setLowPowerMode(!battery.charging && battery.level < 0.2);
+        
+        battery.addEventListener('levelchange', () => {
+          setLowPowerMode(!battery.charging && battery.level < 0.2);
+        });
+        
+        battery.addEventListener('chargingchange', () => {
+          setLowPowerMode(!battery.charging && battery.level < 0.2);
+        });
+      });
+    }
+  }, []);
+  
+  // Save dark mode preference
+  useEffect(() => {
+    localStorage.setItem('urduGptDarkMode', JSON.stringify(darkMode));
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+  
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative">
+    <div className={`min-h-screen flex flex-col ${darkMode ? 'dark' : ''}`}>
+      <Helmet>
+        <meta name="theme-color" content={darkMode ? '#1A1F2C' : '#4A90E2'} />
+      </Helmet>
+      
+      {/* First visit alert */}
       <FirstVisitAlert />
       
-      {/* Hero Section with Video Background */}
-      <section className="relative min-h-screen flex items-center justify-center">
-        <VideoBackground />
-        
-        <div className="container relative z-10 flex flex-col items-center justify-center px-4 py-20 text-center">
-          <div className="animate-fade-in">
-            <Logo className="mx-auto mb-8 animate-float" />
-            
-            <h1 className="text-3xl md:text-5xl font-bold mb-6 text-white max-w-3xl leading-tight">
-              Experience AI-powered Urdu Poetry Conversations
-            </h1>
-            
-            <p className="text-white/80 mb-10 max-w-2xl mx-auto text-lg">
-              Engage with an AI that communicates exclusively in beautiful Urdu verse,
-              creating a unique poetic dialogue experience.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button onClick={scrollToChat} className="btn-primary text-lg px-8 py-6 rounded-full shadow-lg shadow-urdu-accent/20 hover:shadow-urdu-accent/30 transition-all duration-300 group">
-                <span>Try Demo</span>
-                <MessageSquare className="ml-2 group-hover:rotate-12 transition-transform" />
+      {/* Video Background */}
+      <VideoBackground lowPowerMode={lowPowerMode} />
+      
+      {/* Overlay for video */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        {/* Header */}
+        <header className="relative z-20 py-4 px-6">
+          <div className="container mx-auto flex justify-between items-center">
+            <Logo variant="light" />
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={toggleDarkMode}
+                className="text-white hover:bg-white/10 text-sm"
+                aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                <span className="sr-only">{darkMode ? "Light mode" : "Dark mode"}</span>
               </Button>
-              
-              <Button asChild className="btn-secondary text-lg px-8 py-6 rounded-full shadow-lg transition-all duration-300 group">
+              <Button asChild variant="outline" className="text-white border-white/20 hover:bg-white/10 hover:text-white">
                 <Link to="/chat">
-                  <span>Full Experience</span>
-                  <ExternalLink className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  <span className="hidden sm:inline">Open Chat</span>
+                  <span className="sm:hidden">Chat</span>
                 </Link>
               </Button>
             </div>
           </div>
-          
-          <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={scrollToChat}
-              className="rounded-full text-white/70 hover:text-white hover:bg-white/10 p-2 border border-white/20"
-            >
-              <ChevronDown size={24} />
-            </Button>
-          </div>
-        </div>
-      </section>
-      
-      {/* Chat Section */}
-      <section 
-        id="chat-section" 
-        className="relative min-h-screen bg-urdu-dark py-20 px-4"
-      >
-        <div className="absolute inset-0 bg-gradient-radial from-urdu-accent/20 to-transparent opacity-30" />
+        </header>
         
-        <div className="container mx-auto relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4 text-white">Chat with UrduGPT</h2>
-              <p className="text-white/70 max-w-2xl mx-auto">
-                Start your poetic journey with UrduGPT. Every response is crafted 
-                as a unique piece of Urdu poetry.
+        {/* Main content */}
+        <main className="flex-1 flex flex-col">
+          <div className="container mx-auto px-4 py-12 md:py-24 flex flex-col lg:flex-row items-center gap-12">
+            {/* Left column - Hero text */}
+            <div className="flex-1 text-center lg:text-left">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                Experience AI-powered<br />
+                <span className="text-urdu-accent">Urdu Poetry</span> Conversations
+              </h1>
+              <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto lg:mx-0">
+                Chat with UrduGPT, an AI that responds with beautiful Urdu poetry. 
+                Experience the magic of AI-generated Urdu verse in real-time.
               </p>
-              
-              <div className="mt-6">
-                <Button asChild variant="outline" className="border-urdu-accent/30 text-white hover:bg-urdu-accent/10">
-                  <Link to="/chat" className="flex items-center gap-2">
-                    <span>Go to Full Screen Chat</span>
-                    <ExternalLink size={16} />
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Button asChild size="lg" className="btn-primary">
+                  <Link to="/chat">
+                    Start Chatting
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="text-white border-white/20 hover:bg-white/10 hover:text-white"
+                  onClick={() => setShowDemo(!showDemo)}
+                >
+                  {showDemo ? "Hide Demo" : "Try Demo"}
                 </Button>
               </div>
             </div>
             
-            {showChat ? (
-              <div className="animate-scale-in h-[600px] md:h-[700px]">
-                <Chat />
-              </div>
-            ) : (
-              <div className="flex justify-center">
-                <Button 
-                  onClick={() => setShowChat(true)} 
-                  className="btn-primary group"
-                >
-                  <span>Start Chatting</span>
-                  <MessageSquare className="ml-2 group-hover:rotate-12 transition-transform" />
-                </Button>
-              </div>
-            )}
+            {/* Right column - Demo or Features */}
+            <div className="flex-1 w-full max-w-xl mx-auto lg:mx-0">
+              {showDemo ? (
+                <div className="h-[500px] max-h-[70vh]">
+                  <Chat />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    {
+                      title: "Urdu Poetry",
+                      description: "Experience AI-generated Urdu poetry in various traditional forms like ghazal, nazm, and rubai."
+                    },
+                    {
+                      title: "Real-time Responses",
+                      description: "Get instant poetic responses to your messages, creating a flowing conversation."
+                    },
+                    {
+                      title: "Cultural Richness",
+                      description: "Immerse yourself in the rich literary tradition of Urdu poetry and language."
+                    },
+                    {
+                      title: "Accessible Anywhere",
+                      description: "Use UrduGPT on any device with a browser, with offline capabilities as a PWA."
+                    }
+                  ].map((feature, index) => (
+                    <div key={index} className="glass-effect p-6 rounded-xl">
+                      <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
+                      <p className="text-white/70">{feature.description}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
-      
-      {/* Footer */}
-      <footer className="relative bg-urdu-dark py-8 border-t border-white/10">
-        <div className="container mx-auto px-4 text-center text-white/50 text-sm">
-          <Logo className="mx-auto mb-4" />
-          <p>
-            UrduGPT is an innovative AI chatbot for Urdu poetry lovers.
-          </p>
-          <p className="mt-2">
-            © {new Date().getFullYear()} UrduGPT | Made with <span className="text-red-500">❤</span> by Sajjad Rasool
-          </p>
-        </div>
-      </footer>
+        </main>
+        
+        {/* Footer */}
+        <footer className="py-6 px-4 text-center text-white/60 text-sm">
+          <div className="container mx-auto">
+            <p>UrduGPT © {new Date().getFullYear()} | Made with <span className="text-red-500" aria-hidden="true">❤</span><span className="sr-only">love</span> by Sajjad Rasool</p>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 };

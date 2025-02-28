@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -65,9 +64,11 @@ export default {
 				},
 				urdu: {
 					dark: '#1A1F2C',
-					light: '#FFFFFF',
-					accent: '#9b87f5',
-					muted: '#403E43'
+					light: '#F5F7FA',
+					accent: '#4A90E2',
+					secondary: '#F5F7FA',
+					mint: '#34C759',
+					muted: '#6B7280'
 				}
 			},
 			borderRadius: {
@@ -107,6 +108,14 @@ export default {
 				'shimmer': {
 					'0%': { backgroundPosition: '-200% 0' },
 					'100%': { backgroundPosition: '200% 0' }
+				},
+				'typing': {
+					'0%': { width: '0%' },
+					'100%': { width: '100%' }
+				},
+				'blink': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0' }
 				}
 			},
 			animation: {
@@ -117,12 +126,14 @@ export default {
 				'scale-in': 'scale-in 0.2s ease-out',
 				'float': 'float 3s ease-in-out infinite',
 				'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite',
-				'shimmer': 'shimmer 2s linear infinite'
+				'shimmer': 'shimmer 2s linear infinite',
+				'typing': 'typing 3.5s steps(40, end)',
+				'blink': 'blink 1s step-end infinite'
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 			},
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 } satisfies Config;

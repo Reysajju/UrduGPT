@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   AlertDialog,
@@ -27,7 +26,7 @@ const FirstVisitAlert = () => {
       <AlertDialogContent className="glass-effect border-urdu-accent/20 max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-urdu-accent flex items-center gap-2">
-            <Info size={20} />
+            <Info size={20} aria-hidden="true" />
             Welcome to UrduGPT
           </AlertDialogTitle>
           <AlertDialogDescription className="text-white/80">

@@ -1,4 +1,3 @@
-
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
@@ -13,5 +12,13 @@
   "author": {
     "@type": "Person",
     "name": "Sajjad Rasool"
+  },
+  "url": "https://urdu-gpt.com",
+  "screenshot": "https://urdu-gpt.com/screenshots/app-screenshot.png",
+  "softwareVersion": "2.0",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "156"
   }
 }

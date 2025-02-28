@@ -1,13 +1,19 @@
-
 import React from 'react';
-import { Loader2 } from 'lucide-react';
+import { Bot } from 'lucide-react';
 
 const TypingIndicator = () => {
   return (
-    <div className="chat-bubble bot w-auto inline-flex items-center space-x-2 animate-pulse">
-      <div className="flex space-x-1 items-center">
-        <div className="text-xs opacity-70">UrduGPT is composing Urdu poetry (اردو شاعری)</div>
-        <Loader2 className="h-4 w-4 animate-spin opacity-70" />
+    <div className="chat-bubble bot w-auto inline-flex items-center space-x-2 animate-pulse" role="status" aria-label="UrduGPT is typing">
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 text-xs opacity-70">
+          <Bot className="h-3 w-3" />
+          <span>UrduGPT</span>
+          <span className="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </div>
       </div>
     </div>
   );
