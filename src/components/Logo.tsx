@@ -13,12 +13,11 @@ const Logo = ({ className = "", variant = 'light' }: LogoProps) => {
   
   return (
     <div className={`flex items-center gap-2 ${className}`} aria-label="UrduGPT Logo">
-      <div className={`relative w-10 h-10 ${bgColor} rounded-xl flex items-center justify-center overflow-hidden shadow-lg transition-transform hover:scale-105 duration-300`}>
-        <span className={`${textColor} font-bold text-xl`}>U</span>
-        <div className={`absolute -bottom-1 -right-1 w-5 h-5 ${accentBg} rounded-md flex items-center justify-center shadow-md`}>
-          <span className={`${accentColor} font-bold text-xs`}>G</span>
-        </div>
-      </div>
+      <img 
+        src="/urdu-logo.png" 
+        alt="UrduGPT Logo" 
+        className="w-10 h-10 rounded-xl transition-transform hover:scale-105 duration-300"
+      />
       <div className="flex flex-col">
         <span className={`font-bold ${variant === 'light' ? 'text-white' : 'text-urdu-dark'} text-xl leading-none`}>UrduGPT</span>
         <span className={`text-xs ${variant === 'light' ? 'text-white/70' : 'text-urdu-dark/70'}`}>by Sajjad Rasool</span>

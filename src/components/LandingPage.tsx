@@ -72,7 +72,13 @@ const LandingPage = () => {
         {/* Header */}
         <header className="relative z-20 py-4 px-6">
           <div className="container mx-auto flex justify-between items-center">
-            <Logo variant="light" />
+            <div className="flex items-center">
+              <img 
+                src="/urdu-gpt.png" 
+                alt="UrduGPT" 
+                className="h-10 mr-2"
+              />
+            </div>
             <div className="flex items-center gap-2">
               <Button 
                 variant="ghost" 

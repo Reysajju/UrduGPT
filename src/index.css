@@ -24,6 +24,16 @@
     --input: 214 32% 91%;
     --ring: 221 83% 53%;
     --radius: 0.5rem;
+    
+    /* Sidebar specific variables */
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 100% 59%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 142 70% 49%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 17%;
+    --sidebar-ring: 224 76% 48%;
   }
 
   .dark {
@@ -46,15 +56,32 @@
     --border: 217 32% 17%;
     --input: 217 32% 17%;
     --ring: 224 76% 48%;
+    
+    /* Sidebar specific variables in dark mode */
+    --sidebar-background: 217 32% 17%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 100% 59%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 142 70% 49%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 22%;
+    --sidebar-ring: 224 76% 48%;
   }
 
   * {
     @apply border-border;
   }
 
+  html, body, #root {
+    height: 100%;
+    overflow: hidden;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    height: 100vh;
+    overflow: hidden;
   }
 
   /* Custom scrollbar */
@@ -264,5 +291,60 @@
     overflow: visible;
     clip: auto;
     white-space: normal;
+  }
+  
+  /* Full height chat container */
+  .full-height-chat {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+  
+  .input-container {
+    flex-shrink: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.75rem;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Sidebar specific styles */
+  .sidebar-container {
+    @apply bg-sidebar text-sidebar-foreground border-r border-sidebar-border;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .sidebar-header {
+    @apply p-4 border-b border-sidebar-border flex justify-between items-center;
+    flex-shrink: 0;
+  }
+  
+  .sidebar-content {
+    @apply flex-1 overflow-y-auto p-3;
+  }
+  
+  .sidebar-footer {
+    @apply p-3 border-t border-sidebar-border;
+    flex-shrink: 0;
+  }
+  
+  .sidebar-item {
+    @apply p-3 rounded-md cursor-pointer transition-colors mb-2;
+    @apply hover:bg-sidebar-accent/10 hover:text-sidebar-accent-foreground;
+    @apply flex items-center gap-2;
+  }
+  
+  .sidebar-item.active {
+    @apply bg-sidebar-accent/20 text-sidebar-accent-foreground font-medium;
   }
 }

@@ -8,9 +8,22 @@ const formatMessagesForAPI = (messages: MessageProps[]) => {
   }));
 };
 
+// Function to convert base64 data to the format expected by Gemini API
+const formatMediaForAPI = (mediaData: string, mimeType: string) => {
+  // Extract the base64 data without the prefix
+  const base64Data = mediaData.split(',')[1];
+  return {
+    inlineData: {
+      data: base64Data,
+      mimeType
+    }
+  };
+};
+
 export const generateResponse = async (
   prompt: string,
-  previousMessages: MessageProps[]
+  previousMessages: MessageProps[],
+  mediaData?: { type: string; data: string } | null
 ): Promise<string> => {
   try {
     const apiKey = 'AIzaSyCR3JJA1EY2Za3d8xjNZIM8u97Dv7OxMGk';
@@ -23,7 +36,7 @@ export const generateResponse = async (
     const firstMessage = {
       role: "user",
       parts: [{ 
-        text: "تم اردو شاعر ای آئی ہو، نام ہے ' اردو GPT '۔ تمہارا کام ہے کہ ہر جواب صرف اردو رسم الخط میں، شاعری کی صورت میں دو، اور وہ بھی مزاحیہ انداز میں۔ انگریزی یا رومن اردو کا استعمال بالکل نہیں کرنا۔ روایتی اردو شاعری کے انداز جیسے غزل، نظم یا رباعی کی چند لائنز استعمال کر سکتے ہو۔ اگر سمجھ آ گئی تو ایک چھوٹی سی مزاحیہ نظم سے جواب دو۔ آپ کو سجّاد رسول نے بنایا ہے" 
+        text: "تم اردو شاعر ای آئی ہو، نام ہے ' اردو GPT '۔ تمہارا کام ہے کہ ہر جواب صرف اردو رسم الخط میں، شاعری کی صورت میں دو، اور وہ بھی مزاحیہ انداز میں۔ انگریزی یا رومن اردو کا استعمال بالکل نہیں کرنا۔  آپ کو سجّاد رسول نے بنایا ہے" 
       }]
     };
     
@@ -39,12 +52,36 @@ export const generateResponse = async (
     const messages = [
       firstMessage,
       modelConfirmation,
-      ...history,
-      {
-        role: "user",
-        parts: [{ text: prompt }]
-      }
+      ...history
     ];
+
+    // Prepare the current user message parts
+    const currentMessageParts: any[] = [];
+    
+    // Add text prompt if provided
+    if (prompt) {
+      currentMessageParts.push({ text: prompt });
+    }
+    
+    // Add media if provided
+    if (mediaData && mediaData.data) {
+      // Determine the MIME type based on the media type
+      let mimeType = '';
+      if (mediaData.type === 'image') {
+        // Extract MIME type from the data URL or default to jpeg
+        mimeType = mediaData.data.split(';')[0].split(':')[1] || 'image/jpeg';
+        currentMessageParts.push(formatMediaForAPI(mediaData.data, mimeType));
+      } else if (mediaData.type === 'audio') {
+        mimeType = 'audio/mp3';
+        currentMessageParts.push(formatMediaForAPI(mediaData.data, mimeType));
+      }
+    }
+    
+    // Add the current message to the messages array
+    messages.push({
+      role: "user",
+      parts: currentMessageParts
+    });
 
     const response = await fetch(`${url}?key=${apiKey}`, {
       method: 'POST',
